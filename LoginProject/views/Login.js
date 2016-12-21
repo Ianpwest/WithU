@@ -68,7 +68,7 @@ export default class Login extends Component {
         .then((responseJson) => {
             if(responseJson.bSuccessful)
             {
-                //Do something with token here
+                //Do something with token here.LEFT OFF HERE!!
                 //responseJson.Token
                 this.TransitionScreen('Home');
             }
