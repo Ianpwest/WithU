@@ -1,8 +1,9 @@
 import React, {Component, PropTypes} from 'react';
-import {View, Alert, Text, TextInput, Button, TouchableHighlight, ActivityIndicator, StyleSheet} from 'react-native';
+import {AsyncStorage, View, Alert, Text, TextInput, Button, TouchableHighlight, ActivityIndicator, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
+var STORAGE_TOKEN_KEY = 'WithUToken';
 
 export default class Login extends Component {
 
@@ -68,8 +69,8 @@ export default class Login extends Component {
         .then((responseJson) => {
             if(responseJson.bSuccessful)
             {
-                //Do something with token here.LEFT OFF HERE!!
-                //responseJson.Token
+                this.StoreUserToken(responseJson.Token);
+
                 this.TransitionScreen('Home');
             }
             else
@@ -80,6 +81,19 @@ export default class Login extends Component {
         .catch((error) => {
             console.error(error);
         });
+    }
+
+    async StoreUserToken(userToken)
+    {
+        try 
+        {
+            await AsyncStorage.setItem(STORAGE_TOKEN_KEY, userToken);
+            
+        } 
+        catch (error) {
+            //console.log('AsyncStorage error: ' + error.message);
+            Alert.alert(error.message);
+        }
     }
 
     TransitionScreen(strSceneName)

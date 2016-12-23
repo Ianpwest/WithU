@@ -20,7 +20,7 @@ export default class MyActivities extends Component {
     {
         return(
            <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
-               <NavigationBar navStyle={true} highlightIndex={2}></NavigationBar>
+               <NavigationBar navStyle={true} highlightIndex={2} navigator={this.props.navigator}></NavigationBar>
                <Text>You made it to your activities!</Text>
             </View>
         )

@@ -4,10 +4,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class NavigationBar extends Component {
  
-    //navStyle true if logged In
-    //highlightIndex 1-4 of highlighted icon in logged in mode
+    constructor() {
+      super();
 
-    //showIcon shows app icon if logged Out
+    
+
+      this.TransitionScreen = this.TransitionScreen.bind(this);
+   }
     
 
     render()
@@ -18,7 +21,7 @@ export default class NavigationBar extends Component {
             var getStyle = function (iconIndex, iconSetIndex) {
                 var jsonStyle = {
                     color: 'white',
-                    marginRight: 10
+                    marginRight: 20
                 };
 
                 if (iconIndex == iconSetIndex) {
@@ -29,12 +32,15 @@ export default class NavigationBar extends Component {
             }
 
             return(
-                <View style={{flexDirection: 'row', alignItems: 'center', height:65, backgroundColor: "#009688" }}>
+                <View style={{flexDirection: 'row', alignItems: 'center', height:60, backgroundColor: "#009688" }}>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
-                        <Icon style={getStyle(1, this.props.highlightIndex)} name="md-star" size={50}  />
-                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'My Activities')}><Icon style={getStyle(2, this.props.highlightIndex)} name="md-star" size={50}  /></TouchableHighlight>
-                        <Icon style={getStyle(3, this.props.highlightIndex)} name="md-star" size={50}  />
-                        <Icon style={getStyle(4, this.props.highlightIndex)} name="md-star" size={50}  />
+                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'Home', 1, this.props.highlightIndex)}><Icon style={[getStyle(1, this.props.highlightIndex), {marginLeft:10}]} name="ios-git-network-outline" size={40}  /></TouchableHighlight>
+                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'My Activities', 2, this.props.highlightIndex)}><Icon style={getStyle(2, this.props.highlightIndex)} name="ios-albums-outline" size={40}  /></TouchableHighlight>
+                        <Icon style={getStyle(3, this.props.highlightIndex)} name="ios-add-circle-outline" size={40}  />
+                        <Icon style={getStyle(4, this.props.highlightIndex)} name="ios-chatbubbles-outline" size={40}  />
+                    </View>
+                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                        <Icon style={styles.HamburgerIcon} name="ios-menu-outline" size={40}  />
                     </View>
                 </View>
             )
@@ -45,10 +51,10 @@ export default class NavigationBar extends Component {
             let icon = null;
             if(this.props.showIcon)
             {
-                icon = <Icon style={styles.Icon} name="md-star" size={60}  />
+                icon = <Icon style={styles.Icon} name="md-star" size={40}  />
             }
             return(
-                <View style={{flexDirection: 'row', alignItems: 'center', height:65, backgroundColor: "#009688" }}>
+                <View style={{flexDirection: 'row', alignItems: 'center', height:60, backgroundColor: "#009688" }}>
                     {icon}
                     <Text style={styles.Header}>{this.props.title}</Text>
                 </View>
@@ -57,10 +63,14 @@ export default class NavigationBar extends Component {
        
     }
 
-    TransitionScreen(strSceneName) {
-        this.props.navigator.push({
-            name: strSceneName
-        });
+    TransitionScreen(strSceneName, iconIndex, highlightedIconIndex) {
+        //Only navigate if not already on the screen
+        if(iconIndex != highlightedIconIndex)
+        {
+            this.props.navigator.push({
+                        name: strSceneName
+                    });
+        }
     }
     
 }
@@ -81,5 +91,9 @@ const styles = StyleSheet.create({
       color: 'white',
       textAlign: 'left',
       marginRight:10
+  },
+  HamburgerIcon: {
+      color: 'white',
+      marginRight: 20
   }
 });
