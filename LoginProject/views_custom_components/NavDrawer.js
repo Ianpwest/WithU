@@ -1,13 +1,11 @@
 import React, {Component, PropTypes} from 'react';
-import {AsyncStorage,BackAndroid, Button, TouchableHighlight, View, Text, StyleSheet} from 'react-native';
+import {AsyncStorage,BackAndroid, Button, TouchableHighlight, View, Text, Alert, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 var STORAGE_TOKEN_KEY = 'WithUToken';
 
 export default class NavDrawer extends Component {
     
-   
-
     componentDidMount() {
         //the '.bind(this)' makes sure 'this' refers to 'ViewComponent'
         BackAndroid.addEventListener('hardwareBackPress', function() {
@@ -18,7 +16,6 @@ export default class NavDrawer extends Component {
    constructor() {
       super();
 
-      this.TransitionScreen = this.TransitionScreen.bind(this);
       this.LogOut = this.LogOut.bind(this);
    }
 
@@ -27,20 +24,20 @@ export default class NavDrawer extends Component {
         return(
            <View style={styles.NavDrawerContainer}>
                <View style={styles.Header}></View>
+               
                <View style={styles.MenuOption}>
                     <Icon style={styles.Icon} name="ios-person-outline" size={40}  />
                     <Text style={styles.MenuOptionText}>Profile</Text>
                </View>
 
+               <TouchableHighlight style={styles.TouchableHighlight} underlayColor="transparent" onPress={this.LogOut}>
+                    <View style={styles.MenuOption}>
+                            <Icon style={styles.Icon} name="ios-log-out-outline" size={40}  />
+                        <Text style={styles.MenuOptionText}>Log Out</Text>
+                    </View>
+                </TouchableHighlight>
 
-               <View style={styles.BottomContent}>
-                    <TouchableHighlight style={styles.TouchableHighlight} onPress={this.LogOut}>
-                        <View style={styles.MenuOptionBottom}>
-                                <Icon style={styles.Icon} name="ios-log-out-outline" size={40}  />
-                                <Text style={styles.MenuOptionBottomText}>Log Out</Text>
-                        </View>
-                     </TouchableHighlight>
-               </View>
+              
             </View>
         )
     }
@@ -50,18 +47,11 @@ export default class NavDrawer extends Component {
         try 
         {
             await AsyncStorage.setItem(STORAGE_TOKEN_KEY, '');
-            this.TransitionScreen("Login");
+            this.props.onLogoutClicked();
         } 
         catch (error) {
-            Alert.alert(error.message);
+           console.error(error);
         }
-    }
-
-    TransitionScreen(strSceneName)
-    {
-        this.props.navigator.push({
-                name: strSceneName
-                });
     }
 }
 
@@ -69,7 +59,6 @@ const styles = {
     NavDrawerContainer: {
         flex: 1, 
         flexDirection: 'column', 
-        alignItems: 'center', 
         justifyContent: 'flex-start',
         backgroundColor: 'white' 
     },
@@ -81,10 +70,9 @@ const styles = {
         marginBottom:20
     },
     MenuOption: {
-        flex: 1,
+        height:50,
         flexDirection: 'row',
-        alignSelf: 'stretch',
-        height: 20
+        alignSelf: 'stretch'
     },
     MenuOptionBottom:{
         flex: 1,
@@ -114,6 +102,7 @@ const styles = {
         alignSelf: 'stretch'
     },
     TouchableHighlight: {
-        flex: 1
+        height:50,
+        alignSelf: 'stretch'
     }
 }

@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   View,
+  Alert,
   Navigator,
   BackAndroid
 } from 'react-native';
@@ -33,6 +34,8 @@ import SplashScreen from 'react-native-smart-splash-screen'
 export default class LoginProject extends Component {
 constructor(props) {
     super(props);
+
+    this.onLogoutClicked = this.onLogoutClicked.bind(this);
   }
 
   componentDidMount () {
@@ -41,21 +44,22 @@ constructor(props) {
 
   render() {
     return (
-
-      <Drawer ref={(ref) => drawer = ref}  content={<NavDrawer/>}  style={styles.DrawerStyle}  
+      
+      <Drawer ref={(ref) => this.drawer = ref}  content={<NavDrawer onLogoutClicked={this.onLogoutClicked}/>} style={styles.DrawerStyle}  
         type="overlay" side="right"
         panOpenMask={0} openDrawerOffset={100}
         panCloseMask={0.9}
         panThreshold={0.25}
         acceptPan={true} 
+        captureGestures={false}
         elevation={6}
         closedDrawerOffset={0} >
 
-        <Navigator 
+        <Navigator  ref={(nav) => { this.navigator = nav; }} 
           initialRoute={{name: 'Login', index : 0}}
           renderScene={(route, navigator) => {
             if(route.name == 'Login') 
-            {
+            { 
               return <Login navigator={navigator} title={route.name} />
             }
             
@@ -70,11 +74,11 @@ constructor(props) {
 
             if(route.name == 'Home') 
             {
-              return <Home navigator={navigator} title={route.name} drawer={drawer}/>
+              return <Home navigator={navigator} title={route.name} drawer={this.drawer}/>
             }
             if(route.name == 'My Activities')
             {
-              return <MyActivities navigator={navigator} title={route.name} drawer={drawer}/>
+              return <MyActivities navigator={navigator} title={route.name} drawer={this.drawer}/>
             }
           }}
           
@@ -100,6 +104,14 @@ constructor(props) {
         />
        </Drawer>
     );
+  }
+
+  onLogoutClicked()
+  {
+    this.drawer.close();
+    this.navigator.resetTo({
+      name: 'Login'
+    })
   }
 }
 

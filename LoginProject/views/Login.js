@@ -12,8 +12,8 @@ export default class Login extends Component {
       super();
       this.state = {
           animating: false,
-          userId: '',
-          password: '',
+          userId: 'Ianpwest',
+          password: 'Password',
           errorMessage: '',
           errorMessageVisibility: false
         };

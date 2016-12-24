@@ -2,13 +2,12 @@ import React, {Component, PropTypes} from 'react';
 import {AsyncStorage, BackAndroid, Button, Alert, View, Text, StyleSheet} from 'react-native';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
-
 var STORAGE_TOKEN_KEY = 'WithUToken';
 
 export default class Home extends Component {
     
-   constructor(props) {
-      super(props);
+   constructor() {
+      super();
 
       this.state = {
           serviceResponseText: ''
