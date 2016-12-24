@@ -1,15 +1,15 @@
 import React, {Component, PropTypes} from 'react';
 import { View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Drawer from 'react-native-drawer';
 
 export default class NavigationBar extends Component {
  
-    constructor() {
-      super();
-
-    
+    constructor(props) {
+      super(props);
 
       this.TransitionScreen = this.TransitionScreen.bind(this);
+      this.OpenControlPanel = this.OpenControlPanel.bind(this);
    }
     
 
@@ -32,17 +32,18 @@ export default class NavigationBar extends Component {
             }
 
             return(
-                <View style={{flexDirection: 'row', alignItems: 'center', height:60, backgroundColor: "#009688" }}>
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
-                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'Home', 1, this.props.highlightIndex)}><Icon style={[getStyle(1, this.props.highlightIndex), {marginLeft:10}]} name="ios-git-network-outline" size={40}  /></TouchableHighlight>
-                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'My Activities', 2, this.props.highlightIndex)}><Icon style={getStyle(2, this.props.highlightIndex)} name="ios-albums-outline" size={40}  /></TouchableHighlight>
-                        <Icon style={getStyle(3, this.props.highlightIndex)} name="ios-add-circle-outline" size={40}  />
-                        <Icon style={getStyle(4, this.props.highlightIndex)} name="ios-chatbubbles-outline" size={40}  />
+                
+                    <View style={{flexDirection: 'row', alignItems: 'center', height:60, backgroundColor: "#009688" }}>
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                            <TouchableHighlight underlayColor="transparent" onPress={this.TransitionScreen.bind(this, 'Home', 1, this.props.highlightIndex)}><Icon style={[getStyle(1, this.props.highlightIndex), {marginLeft:10}]} name="ios-git-network-outline" size={40}  /></TouchableHighlight>
+                            <TouchableHighlight underlayColor="transparent" onPress={this.TransitionScreen.bind(this, 'My Activities', 2, this.props.highlightIndex)}><Icon style={getStyle(2, this.props.highlightIndex)} name="ios-albums-outline" size={40}  /></TouchableHighlight>
+                            <Icon style={getStyle(3, this.props.highlightIndex)} name="ios-add-circle-outline" size={40}  />
+                            <Icon style={getStyle(4, this.props.highlightIndex)} name="ios-chatbubbles-outline" size={40}  />
+                        </View>
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                            <TouchableHighlight underlayColor="transparent" onPress={this.OpenControlPanel}><Icon style={styles.HamburgerIcon} name="ios-menu-outline" size={40}  /></TouchableHighlight>
+                        </View>
                     </View>
-                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                        <Icon style={styles.HamburgerIcon} name="ios-menu-outline" size={40}  />
-                    </View>
-                </View>
             )
         }
         //Logged Out View
@@ -63,6 +64,14 @@ export default class NavigationBar extends Component {
        
     }
 
+    CloseControlPanel(){
+        this.props.drawer.close()
+    }
+
+    OpenControlPanel(){
+        this.props.drawer.open()
+    }
+
     TransitionScreen(strSceneName, iconIndex, highlightedIconIndex) {
         //Only navigate if not already on the screen
         if(iconIndex != highlightedIconIndex)
@@ -71,7 +80,7 @@ export default class NavigationBar extends Component {
                         name: strSceneName
                     });
         }
-    }
+    };
     
 }
 

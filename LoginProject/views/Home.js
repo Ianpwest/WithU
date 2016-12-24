@@ -2,12 +2,13 @@ import React, {Component, PropTypes} from 'react';
 import {AsyncStorage, BackAndroid, Button, Alert, View, Text, StyleSheet} from 'react-native';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
+
 var STORAGE_TOKEN_KEY = 'WithUToken';
 
 export default class Home extends Component {
     
-   constructor() {
-      super();
+   constructor(props) {
+      super(props);
 
       this.state = {
           serviceResponseText: ''
@@ -24,17 +25,21 @@ export default class Home extends Component {
         }.bind(this));
     }
 
+    
+
     render()
     {
         return(
-           <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
-               <NavigationBar navStyle={true} highlightIndex={1} navigator={this.props.navigator}></NavigationBar>
-               <Text>You made it home!</Text>
+    
+            <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+                <NavigationBar navStyle={true} highlightIndex={1} navigator={this.props.navigator} drawer={this.props.drawer}></NavigationBar>
+                <Text>You made it home!</Text>
 
-               <Button onPress={this.CallSecureService} title="Call secure service"></Button>
+                <Button onPress={this.CallSecureService} title="Call secure service"></Button>
 
-               <Text>{this.state.serviceResponseText}</Text>
+                <Text>{this.state.serviceResponseText}</Text>
             </View>
+           
         )
     }
 
@@ -78,6 +83,15 @@ export default class Home extends Component {
                 name: strSceneName
                 });
     }
-
-    
 }
+
+const styles = StyleSheet.create({
+  DrawerStyle: {
+    shadowColor: '#000000', 
+    shadowOpacity: 0.8, 
+    shadowRadius: 3
+  },
+  ServiceButton:{
+      height:150
+  }
+});

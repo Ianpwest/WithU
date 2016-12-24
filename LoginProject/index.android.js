@@ -25,6 +25,8 @@ import Home from './views/Home';
 import SignUp from './views/SignUp';
 import ForgotPassword from './views/ForgotPassword';
 import MyActivities from './views/MyActivities';
+import Drawer from 'react-native-drawer';
+import NavDrawer from './views_custom_components/NavDrawer';
 
 import SplashScreen from 'react-native-smart-splash-screen'
 
@@ -39,70 +41,64 @@ constructor(props) {
 
   render() {
     return (
-      <Navigator 
-        
-        initialRoute={{name: 'Login', index : 0}}
-        renderScene={(route, navigator) => {
-          if(route.name == 'Login') 
+
+      <Drawer ref={(ref) => drawer = ref}  content={<NavDrawer/>}  style={styles.DrawerStyle}  
+        type="overlay" side="right"
+        panOpenMask={0} openDrawerOffset={100}
+        panCloseMask={0.9}
+        panThreshold={0.25}
+        acceptPan={true} 
+        elevation={6}
+        closedDrawerOffset={0} >
+
+        <Navigator 
+          initialRoute={{name: 'Login', index : 0}}
+          renderScene={(route, navigator) => {
+            if(route.name == 'Login') 
+            {
+              return <Login navigator={navigator} title={route.name} />
+            }
+            
+            if(route.name == 'Sign Up')
+            {
+              return <SignUp navigator={navigator} title={route.name}/>
+            }
+            if(route.name == 'Forgot Password')
+            {
+              return <ForgotPassword navigator={navigator} title={route.name}/>
+            }
+
+            if(route.name == 'Home') 
+            {
+              return <Home navigator={navigator} title={route.name} drawer={drawer}/>
+            }
+            if(route.name == 'My Activities')
+            {
+              return <MyActivities navigator={navigator} title={route.name} drawer={drawer}/>
+            }
+          }}
+          
+          configureScene={(route) => {
+          if (route.name == 'Login') 
           {
-            return <Login navigator={navigator} title={route.name}/>
+            return Navigator.SceneConfigs.FloatFromBottom;
+          } 
+          else if(route.name == 'Home')
+          {
+            return Object.assign({}, Navigator.SceneConfigs.HorizontalSwipeJump, {gestures: {}});
           }
-          if(route.name == 'Home') 
+          else if(route.name == 'Sign Up' || route.name == 'Forgot Password')
           {
-            return <Home navigator={navigator} title={route.name}/>
+            return Navigator.SceneConfigs.VerticalUpSwipeJump;
           }
-          if(route.name == 'Sign Up')
+          else
           {
-            return <SignUp navigator={navigator} title={route.name}/>
-          }
-          if(route.name == 'Forgot Password')
-          {
-            return <ForgotPassword navigator={navigator} title={route.name}/>
-          }
-          if(route.name == 'My Activities')
-          {
-            return <MyActivities navigator={navigator} title={route.name}/>
+            return Navigator.SceneConfigs.HorizontalSwipeJump;
           }
         }}
-        
-        configureScene={(route) => {
-        if (route.name == 'Login') 
-        {
-          return Navigator.SceneConfigs.FloatFromBottom;
-        } 
-        else if(route.name == 'Home')
-        {
-          return Navigator.SceneConfigs.HorizontalSwipeJump;
-        }
-        else if(route.name == 'Sign Up' || route.name == 'Forgot Password')
-        {
-          return Navigator.SceneConfigs.VerticalUpSwipeJump;
-        }
-        else
-        {
-          return Navigator.SceneConfigs.HorizontalSwipeJump;
-        }
-      }}
 
-      />
-
-      // <MyScene title="Ian"/>
-      // <View style={styles.container}>
-      // <Toolbar icon="star" title="StartUp"
-      //  leftIconStyle={styles.toolbarLeftIcon}
-      //  style={styles.toolbar}/>
-      
-      //  <TextInput style = {{height:40, width:200, borderColor: 'gray', borderWidth:1}}/>
-      //  <Button text="Normal Flat"/>
-      //  <Button text="Normal Raised" raised={true}/>
-
-      //  <Text style={styles.welcome}>
-      //   Testing Roboto
-      //  </Text>
-      //   <Text style={styles.instructions}>
-      //     Testing out the inputs
-      //   </Text>
-      // </View>
+        />
+       </Drawer>
     );
   }
 }
