@@ -7,7 +7,8 @@ export default class MyActivities extends Component {
     componentDidMount() {
         //the '.bind(this)' makes sure 'this' refers to 'ViewComponent'
         BackAndroid.addEventListener('hardwareBackPress', function() {
-            this.props.navigator.pop();
+            // this.props.navigator.pop();
+             this.props.drawer.close();
             return true;
         }.bind(this));
     }

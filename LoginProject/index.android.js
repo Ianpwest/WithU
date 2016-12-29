@@ -13,7 +13,8 @@ import {
   View,
   Alert,
   Navigator,
-  BackAndroid
+  BackAndroid,
+  AsyncStorage
 } from 'react-native';
 import {
   Button,
@@ -28,24 +29,37 @@ import ForgotPassword from './views/ForgotPassword';
 import MyActivities from './views/MyActivities';
 import Drawer from 'react-native-drawer';
 import NavDrawer from './views_custom_components/NavDrawer';
-
 import SplashScreen from 'react-native-smart-splash-screen'
 
+var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
+
 export default class LoginProject extends Component {
+
 constructor(props) {
     super(props);
 
+    this.state = {
+      closeSplash : false
+    };
+
+    this.CheckUsersLoggedInStatus = this.CheckUsersLoggedInStatus.bind(this);
     this.onLogoutClicked = this.onLogoutClicked.bind(this);
   }
 
   componentDidMount () {
-     SplashScreen.close(SplashScreen.animationType.scale, 850, 500)
+    this.CheckUsersLoggedInStatus();
   }
 
   render() {
+
+    if(this.state.closeSplash)
+    {
+      SplashScreen.close(SplashScreen.animationType.scale, 850, 500)
+    }
+
     return (
       
-      <Drawer ref={(ref) => this.drawer = ref}  content={<NavDrawer onLogoutClicked={this.onLogoutClicked}/>} style={styles.DrawerStyle}  
+      <Drawer ref={(ref) => this.drawer = ref}  content={<NavDrawer ref={(ref) => this.navDrawer = ref} onLogoutClicked={this.onLogoutClicked}/>} style={styles.DrawerStyle}  
         type="overlay" side="right"
         panOpenMask={0} openDrawerOffset={100}
         panCloseMask={0.9}
@@ -60,9 +74,8 @@ constructor(props) {
           renderScene={(route, navigator) => {
             if(route.name == 'Login') 
             { 
-              return <Login navigator={navigator} title={route.name} />
+              return <Login navigator={navigator} title={route.name} navDrawer={this.navDrawer}/>
             }
-            
             if(route.name == 'Sign Up')
             {
               return <SignUp navigator={navigator} title={route.name}/>
@@ -72,7 +85,7 @@ constructor(props) {
               return <ForgotPassword navigator={navigator} title={route.name}/>
             }
 
-            if(route.name == 'Home') 
+            if(route.name == 'Home' || 'HomeLoggedIn') 
             {
               return <Home navigator={navigator} title={route.name} drawer={this.drawer}/>
             }
@@ -91,6 +104,10 @@ constructor(props) {
           {
             return Object.assign({}, Navigator.SceneConfigs.HorizontalSwipeJump, {gestures: {}});
           }
+          else if(route.name == 'HomeLoggedIn')
+          {
+            return Object.assign({}, Navigator.SceneConfigs.FadeAndroid, {gestures: {}});
+          }
           else if(route.name == 'Sign Up' || route.name == 'Forgot Password')
           {
             return Navigator.SceneConfigs.VerticalUpSwipeJump;
@@ -103,7 +120,37 @@ constructor(props) {
 
         />
        </Drawer>
+
     );
+  }
+
+  async CheckUsersLoggedInStatus()
+  {
+    try 
+        {
+            var userInfo = await AsyncStorage.getItem(STORAGE_USER_INFO_KEY);
+
+            var userInfoJson = JSON.parse(userInfo);
+
+            if(userInfoJson == null)
+            {
+                this.setState({closeSplash: true});
+                return;
+            }
+
+            if (userInfoJson.Token !== null)
+            {
+              this.navigator.push({
+                name: 'HomeLoggedIn'
+              });
+            }
+
+            this.setState({closeSplash: true});
+            
+        } 
+        catch (error) {
+             Alert.alert(error.message);
+        }
   }
 
   onLogoutClicked()

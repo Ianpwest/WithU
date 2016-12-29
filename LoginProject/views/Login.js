@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react';
-import {AsyncStorage, View, Alert, Text, TextInput, Button, TouchableHighlight, ActivityIndicator, StyleSheet} from 'react-native';
+import {AsyncStorage, View, Alert, Text, TextInput, ScrollView, Button, TouchableHighlight, ActivityIndicator, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
-var STORAGE_TOKEN_KEY = 'WithUToken';
+var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
 
 export default class Login extends Component {
 
@@ -24,28 +24,29 @@ export default class Login extends Component {
    
     render(){
         return(
-            <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+            <View style={{flex: 1, flexDirection: 'column'}}>
               
                 <NavigationBar title={this.props.title} showIcon={true} navigator={this.props.navigator}></NavigationBar>
 
-                <View style={{flexDirection: 'column', justifyContent: 'center', marginTop: 50}}>
-                    <Text style={styles.ControlLabel}>Username</Text>
-                    <TextInput style={styles.TextInput} value={this.state.userId} ref={(input) => this.usernameTextInput = input} onChangeText={(userId) => this.setState({userId})}></TextInput>
-                </View>
+                <ScrollView keyboardShouldPersistTaps={true} style={{flexDirection: 'column'}} contentContainerStyle={{alignItems: 'center', justifyContent: 'flex-start', height:750}}>
+                    <View style={{flexDirection: 'column', justifyContent: 'center', marginTop: 50}}>
+                        <Text style={styles.ControlLabel}>Username</Text>
+                        <TextInput style={styles.TextInput} value={this.state.userId} ref={(input) => this.usernameTextInput = input} onChangeText={(userId) => this.setState({userId})}></TextInput>
+                    </View>
 
-                <View style={{flexDirection: 'column', justifyContent: 'center', marginTop:15}}>
-                    <Text style={styles.ControlLabel}>Password</Text>
-                    <TextInput style={styles.TextInput} secureTextEntry = {true} value={this.state.password} ref={(input) => this.passwordTextInput = input} onChangeText={(password) => this.setState({password})}></TextInput>
-                    <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'Forgot Password')} style={{alignSelf: 'flex-end'}}><Text style={styles.ForgotPassword}>Forgot Password?</Text></TouchableHighlight>
-                </View>
+                    <View style={{flexDirection: 'column', justifyContent: 'center', marginTop:15}}>
+                        <Text style={styles.ControlLabel}>Password</Text>
+                        <TextInput style={styles.TextInput} secureTextEntry = {true} value={this.state.password} ref={(input) => this.passwordTextInput = input} onChangeText={(password) => this.setState({password})}></TextInput>
+                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'Forgot Password')} style={{alignSelf: 'flex-end'}}><Text style={styles.ForgotPassword}>Forgot Password?</Text></TouchableHighlight>
+                    </View>
 
-                <View style={{flexDirection: 'column', marginTop:80, width:250, height:190}}>
-                    <Text style={styles.ErrorText}>{this.state.errorMessage}</Text>
-                    <ActivityIndicator animating={true} style={{opacity: this.state.animating ? 1.0 : 0.0}} color="black"/>
-                    <Button onPress={this.LoginUser} title="Log In" color="#1de9b6" />
-                    <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'Sign Up')} style={{alignSelf: 'flex-start'}}><Text style={styles.SignUp}>SIGN UP</Text></TouchableHighlight>
-                </View>
-
+                    <View style={{flexDirection: 'column', marginTop:80, width:250, height:190}}>
+                        <Text style={styles.ErrorText}>{this.state.errorMessage}</Text>
+                        <ActivityIndicator animating={true} style={{opacity: this.state.animating ? 1.0 : 0.0}} color="black"/>
+                        <Button onPress={this.LoginUser} title="Log In" color="#1de9b6" />
+                        <TouchableHighlight onPress={this.TransitionScreen.bind(this, 'Sign Up')} style={{alignSelf: 'flex-start'}}><Text style={styles.SignUp}>SIGN UP</Text></TouchableHighlight>
+                    </View>
+                </ScrollView>
             </View>
         )
     }
@@ -69,7 +70,21 @@ export default class Login extends Component {
         .then((responseJson) => {
             if(responseJson.bSuccessful)
             {
-                this.StoreUserToken(responseJson.Token);
+                var userInfo = {
+                    "Token": responseJson.Token,
+                    "LastName": responseJson.LastName,
+                    "FirstName": responseJson.FirstName
+                }
+                
+                //Store the users info to the local device
+                this.StoreUserInfo(userInfo);
+
+                //Show who's logged in for the drawer
+                this.props.navDrawer.setState({usersName: userInfo.FirstName});
+
+                //How to dismiss the keyboard programatically
+                var DismissKeyboard = require('dismissKeyboard');
+                DismissKeyboard();
 
                 this.TransitionScreen('Home');
             }
@@ -83,15 +98,13 @@ export default class Login extends Component {
         });
     }
 
-    async StoreUserToken(userToken)
+    async StoreUserInfo(userInfo)
     {
         try 
         {
-            await AsyncStorage.setItem(STORAGE_TOKEN_KEY, userToken);
-            
+            await AsyncStorage.setItem(STORAGE_USER_INFO_KEY, JSON.stringify(userInfo));
         } 
         catch (error) {
-            //console.log('AsyncStorage error: ' + error.message);
             Alert.alert(error.message);
         }
     }

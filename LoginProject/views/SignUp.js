@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {BackAndroid, Button, TextInput, ActivityIndicator, TouchableHighlight, View, Text, StyleSheet} from 'react-native';
+import {BackAndroid, Button, TextInput, ActivityIndicator, TouchableHighlight, View, ScrollView, Text, StyleSheet} from 'react-native';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
 export default class SignUp extends Component{
@@ -33,9 +33,9 @@ export default class SignUp extends Component{
     
     render(){
         return(
-            <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+            <View style={{flexDirection: 'column', justifyContent: 'flex-start', flex: 2}}>
                <NavigationBar title={this.props.title} showIcon={true} navigator={this.props.navigator}></NavigationBar>
-
+               <ScrollView keyboardShouldPersistTaps={true} style={{flexDirection: 'column'}} contentContainerStyle={{alignItems: 'center', justifyContent: 'flex-start', height:750}}>
                <View style={styles.ControlContainer}>
                     <Text style={styles.ControlLabel}>Username</Text>
                     <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.username} ref={(input) => this.usernameTextInput = input} onChangeText={(userId) => this.setState({userId})}></TextInput>
@@ -66,6 +66,7 @@ export default class SignUp extends Component{
                     <ActivityIndicator animating={true} style={{opacity: this.state.animating ? 1.0 : 0.0}} color="black"/>
                     <Button onPress={this.SignUpUser} title="Sign Up" color="#1de9b6" />
                 </View>
+                </ScrollView>
             </View>
         )
     }
