@@ -21,7 +21,6 @@ import {
   Toolbar
 } from 'react-native-material-design';
 
-import MyScene from './views/MyScene';
 import Login from './views/Login';
 import Home from './views/Home';
 import SignUp from './views/SignUp';
@@ -85,7 +84,7 @@ constructor(props) {
               return <ForgotPassword navigator={navigator} title={route.name}/>
             }
 
-            if(route.name == 'Home' || 'HomeLoggedIn') 
+            if(route.name == 'Home' || route.name == 'HomeLoggedIn') 
             {
               return <Home navigator={navigator} title={route.name} drawer={this.drawer}/>
             }
