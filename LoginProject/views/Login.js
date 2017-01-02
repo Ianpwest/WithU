@@ -12,7 +12,7 @@ export default class Login extends Component {
       super();
       this.state = {
           animating: false,
-          userId: 'Ianpwest',
+          email: 'ian.p.weston@gmail.com',
           password: 'Password',
           errorMessage: '',
           errorMessageVisibility: false
@@ -30,8 +30,8 @@ export default class Login extends Component {
 
                 <ScrollView keyboardShouldPersistTaps={true} style={{flexDirection: 'column'}} contentContainerStyle={{alignItems: 'center', justifyContent: 'flex-start', height:750}}>
                     <View style={{flexDirection: 'column', justifyContent: 'center', marginTop: 50}}>
-                        <Text style={styles.ControlLabel}>Username</Text>
-                        <TextInput style={styles.TextInput} value={this.state.userId} ref={(input) => this.usernameTextInput = input} onChangeText={(userId) => this.setState({userId})}></TextInput>
+                        <Text style={styles.ControlLabel}>Email</Text>
+                        <TextInput style={styles.TextInput} value={this.state.email} ref={(input) => this.emailTextInput = input} onChangeText={(email) => this.setState({email})}></TextInput>
                     </View>
 
                     <View style={{flexDirection: 'column', justifyContent: 'center', marginTop:15}}>
@@ -61,7 +61,7 @@ export default class Login extends Component {
                 }),
                 method: 'post',
                 body: JSON.stringify({
-                    Username: this.state.userId,
+                    Email: this.state.email,
                     Password: this.state.password
                 })
             }

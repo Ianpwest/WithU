@@ -1,27 +1,21 @@
 import React, {Component, PropTypes} from 'react';
-import {BackAndroid, Button, TextInput, ActivityIndicator, TouchableHighlight, View, ScrollView, Text, ToastAndroid, StyleSheet} from 'react-native';
+import {BackAndroid, ActivityIndicator, TextInput, Button, Alert, View, Text, StyleSheet} from 'react-native';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
-export default class SignUp extends Component{
+export default class ResetPassword extends Component{
     constructor(){
         super();
 
         this.state = {
-          animating: false,
-          email: '',
-          password: '',
-          confirmPassword: '',
-          firstName: '',
-          lastName: '',
-          errorMessage: '',
-          errorMessageVisibility: false
+            "resetCode": '',
+            "password": '',
+            "confirmPassword": ''
         };
 
-        this.SignUpUser = this.SignUpUser.bind(this);
         this.TransitionScreen = this.TransitionScreen.bind(this);
-        this.ValidateState = this.ValidateState.bind(this);
+        this.ResetPassword = this.ResetPassword.bind(this);
     }
-    
+
     componentDidMount() {
         //the '.bind(this)' makes sure 'this' refers to 'ViewComponent'
         BackAndroid.addEventListener('hardwareBackPress', function() {
@@ -32,37 +26,19 @@ export default class SignUp extends Component{
     
     render(){
         return(
-            <View style={{flexDirection: 'column', justifyContent: 'flex-start', flex: 2}}>
+            <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
                <NavigationBar title={this.props.title} showIcon={true} navigator={this.props.navigator}></NavigationBar>
-               <ScrollView keyboardShouldPersistTaps={true} style={{flexDirection: 'column'}} contentContainerStyle={{alignItems: 'center', justifyContent: 'flex-start', height:750}}>
-                <View style={styles.ControlContainer}>
-                    <Text style={styles.ControlLabel}>Email</Text>
-                    <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.email} ref={(input) => this.emailTextInput = input} onChangeText={(email) => this.setState({email})}
-                     keyboardType="email-address"
-                     returnKeyType="next"
-                     onSubmitEditing={(event) => { 
-                        this.firstNameTextInput.focus(); 
-                     }}>
-                    </TextInput>
-                </View>
-                <View style={styles.ControlContainer}>
-                    <Text style={styles.ControlLabel}>First Name</Text>
-                    <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.firstName} ref={(input) => this.firstNameTextInput = input} onChangeText={(firstName) => this.setState({firstName})}
-                     returnKeyType="next"
-                     onSubmitEditing={(event) => { 
-                        this.lastNameTextInput.focus(); 
-                     }}></TextInput>
-                </View>
-                <View style={styles.ControlContainer}>
-                    <Text style={styles.ControlLabel}>Last Name</Text>
-                    <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.lastName} ref={(input) => this.lastNameTextInput = input} onChangeText={(lastName) => this.setState({lastName})}
+
+               <View style={styles.ControlContainer}>
+                    <Text style={styles.ControlLabel}>Email Reset Code</Text>
+                    <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.resetCode} ref={(input) => this.resetCodeTextInput = input} onChangeText={(resetCode) => this.setState({resetCode})}
                      returnKeyType="next"
                      onSubmitEditing={(event) => { 
                         this.passwordTextInput.focus(); 
                      }}></TextInput>
                 </View>
                 <View style={styles.ControlContainer}>
-                    <Text style={styles.ControlLabel}>Password</Text>
+                    <Text style={styles.ControlLabel}>New Password</Text>
                     <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.password} secureTextEntry = {true} ref={(input) => this.passwordTextInput = input} onChangeText={(password) => this.setState({password})}
                      returnKeyType="next"
                      onSubmitEditing={(event) => { 
@@ -72,28 +48,24 @@ export default class SignUp extends Component{
                 <View style={styles.ControlContainer}>
                     <Text style={styles.ControlLabel}>Confirm Password</Text>
                     <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.confirmPassword} secureTextEntry = {true} ref={(input) => this.confirmPasswordTextInput = input} onChangeText={(confirmPassword) => this.setState({confirmPassword})}
-                     returnKeyType="done"
-                     onSubmitEditing={(event) => { 
-                        this.SignUpUser();
-                     }}></TextInput>
+                     returnKeyType="done"></TextInput>
                 </View>
 
                 <View style={{flexDirection: 'column', marginTop:10, width:250, height:190}}>
                     <Text style={styles.ErrorText}>{this.state.errorMessage}</Text>
                     <ActivityIndicator animating={true} style={{opacity: this.state.animating ? 1.0 : 0.0}} color="black"/>
-                    <Button onPress={this.SignUpUser} title="Sign Up" color="#1de9b6" ref={(input) => this.signUpUserButton = input} />
+                    <Button onPress={this.ResetPassword} title="Reset Password" color="#1de9b6" ref={(input) => this.resetPasswordButton = input} />
                 </View>
-                </ScrollView>
             </View>
         )
     }
 
-    SignUpUser()
+    ResetPassword()
     {
         //How to dismiss the keyboard programatically
         var DismissKeyboard = require('dismissKeyboard');
         DismissKeyboard();
-        
+
         if(!this.ValidateState())
         {
             this.setState({animating: false, errorMessage: 'Fill out all required fields.', errorMessageVisibility: true});
@@ -107,24 +79,17 @@ export default class SignUp extends Component{
             return;
         }
 
-        //Validate email in correct format
-        if (!this.ValidateEmail(this.state.email)) { 
-             this.setState({animating: false, errorMessage: 'Invalid email format.', errorMessageVisibility: true});
-             return;
-        }
-
         this.setState({animating: true, errorMessage: '', errorMessageVisibility: false});
 
-        fetch('http://resty.azurewebsites.net/api/account/RegisterAccount',{
+        fetch('http://resty.azurewebsites.net/api/account/ResetPassword',{
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 }),
                 method: 'post',
                 body: JSON.stringify({
-                    Email: this.state.email,
-                    Password: this.state.password,
-                    FirstName: this.state.firstName,
-                    LastName: this.state.lastName
+                    Email: this.props.email,
+                    ResetToken: this.state.resetCode,
+                    Password: this.state.password
                 })
             }
         )
@@ -146,9 +111,7 @@ export default class SignUp extends Component{
 
     ValidateState()
     {
-        if(this.state.email == ''
-        || this.state.firstName == ''
-        || this.state.lastName == ''
+        if(this.state.resetCode == ''
         || this.state.password == '')
         {
             return false;
@@ -156,12 +119,7 @@ export default class SignUp extends Component{
 
         return true;
     }
-
-    ValidateEmail = (email) => {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    };
-
+   
     TransitionScreen(strSceneName)
     {
         this.setState({animating: false});
@@ -185,8 +143,5 @@ const styles = StyleSheet.create({
   ControlLabel: {
       fontSize:16,
       marginBottom: -8
-  },
-  ErrorText: {
-      color: 'red'
   }
 });

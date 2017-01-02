@@ -25,6 +25,7 @@ import Login from './views/Login';
 import Home from './views/Home';
 import SignUp from './views/SignUp';
 import ForgotPassword from './views/ForgotPassword';
+import ResetPassword from './views/ResetPassword';
 import MyActivities from './views/MyActivities';
 import Drawer from 'react-native-drawer';
 import NavDrawer from './views_custom_components/NavDrawer';
@@ -83,7 +84,10 @@ constructor(props) {
             {
               return <ForgotPassword navigator={navigator} title={route.name}/>
             }
-
+            if(route.name == 'Reset Password')
+            {
+              return <ResetPassword navigator={navigator} title={route.name} email={route.email}/>
+            }
             if(route.name == 'Home' || route.name == 'HomeLoggedIn') 
             {
               return <Home navigator={navigator} title={route.name} drawer={this.drawer}/>
