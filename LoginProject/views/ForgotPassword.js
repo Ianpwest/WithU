@@ -8,7 +8,7 @@ export default class ForgotPassword extends Component{
 
         this.state = {
           animating: false,
-          email: 'ian.p.weston@gmail.com',
+          email: '',
           errorMessage: '',
           errorMessageVisibility: false
         };
@@ -53,7 +53,7 @@ export default class ForgotPassword extends Component{
         //How to dismiss the keyboard programatically
         var DismissKeyboard = require('dismissKeyboard');
         DismissKeyboard();
-        
+
         if(!this.ValidateState())
         {
             this.setState({animating: false, errorMessage: 'Fill out all required fields.', errorMessageVisibility: true});

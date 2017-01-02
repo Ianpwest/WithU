@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import {BackAndroid, Button, TextInput, ActivityIndicator, TouchableHighlight, View, ScrollView, Text, ToastAndroid, StyleSheet} from 'react-native';
+import {BackAndroid, Button, TextInput, ActivityIndicator, TouchableHighlight, 
+        View, ScrollView, Text, ToastAndroid, Modal, StyleSheet} from 'react-native';
 import NavigationBar from '../views_custom_components/NavigationBar';
 
 export default class SignUp extends Component{
@@ -14,12 +15,15 @@ export default class SignUp extends Component{
           firstName: '',
           lastName: '',
           errorMessage: '',
-          errorMessageVisibility: false
+          errorMessageVisibility: false,
+          modalVisible: false
         };
 
         this.SignUpUser = this.SignUpUser.bind(this);
         this.TransitionScreen = this.TransitionScreen.bind(this);
         this.ValidateState = this.ValidateState.bind(this);
+        this.TransitionToLogin = this.TransitionToLogin.bind(this);
+        this.ResendActivationEmail = this.ResendActivationEmail.bind(this);
     }
     
     componentDidMount() {
@@ -84,6 +88,26 @@ export default class SignUp extends Component{
                     <Button onPress={this.SignUpUser} title="Sign Up" color="#1de9b6" ref={(input) => this.signUpUserButton = input} />
                 </View>
                 </ScrollView>
+
+               <Modal
+                   animationType={"slide"}
+                   transparent={false}
+                   visible={this.state.modalVisible}
+                   onRequestClose={() => { this.setState({modalVisible: false}) } }
+                   >
+                 <View style={{flexDirection: 'column', flex: 2}}>
+                    <View style={styles.ControlContainer}>
+                        <Text style={styles.ControlLabel}>Please check your email to validate before continuing.</Text>
+                    </View>
+                    <View style={styles.ControlContainer}>
+                        <Button style={{marginTop:50}} onPress={this.TransitionToLogin} title="Validated! Continue..." color="#1de9b6" ref={(input) => this.validatedUserButton = input} />
+                    </View> 
+                    <View style={styles.ControlContainer}>
+                        <ActivityIndicator animating={true} style={{opacity: this.state.animating ? 1.0 : 0.0}} color="black"/>
+                        <Button style={{marginTop:50}} onPress={this.ResendActivationEmail} title="Resend validation email" color="gray" ref={(input) => this.resendValidationButton = input} />
+                    </View> 
+                </View>
+               </Modal>
             </View>
         )
     }
@@ -93,7 +117,7 @@ export default class SignUp extends Component{
         //How to dismiss the keyboard programatically
         var DismissKeyboard = require('dismissKeyboard');
         DismissKeyboard();
-        
+
         if(!this.ValidateState())
         {
             this.setState({animating: false, errorMessage: 'Fill out all required fields.', errorMessageVisibility: true});
@@ -132,12 +156,36 @@ export default class SignUp extends Component{
         .then((responseJson) => {
             if(responseJson.bSuccessful)
             {
-                this.TransitionScreen('Login');
+                this.setState({animating: false, errorMessage: '', errorMessageVisibility: false, modalVisible: true});
+                //this.TransitionScreen('Login');
             }
             else
             {
                 this.setState({animating: false, errorMessage: responseJson.FailureReason, errorMessageVisibility: true});
             }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    ResendActivationEmail()
+    {
+        this.setState({animating: true, errorMessage: '', errorMessageVisibility: false});
+
+        fetch('http://resty.azurewebsites.net/api/account/ResendActivationEmail',{
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                method: 'post',
+                body: JSON.stringify({
+                    Email: this.state.email
+                })
+            }
+        )
+        .then((response) => response.json())
+        .then((responseJson) => {
+             this.setState({animating: false});
         })
         .catch((error) => {
             console.error(error);
@@ -162,13 +210,18 @@ export default class SignUp extends Component{
         return re.test(email);
     };
 
+    TransitionToLogin()
+    {
+        this.setState({modalVisible: false});
+        this.TransitionScreen('Login');
+    }
     TransitionScreen(strSceneName)
     {
         this.setState({animating: false});
         
         this.props.navigator.push({
-                name: strSceneName
-                });
+            name: strSceneName
+        });
     }
 }
 
