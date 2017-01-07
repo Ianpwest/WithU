@@ -139,7 +139,7 @@ export default class SignUp extends Component{
 
         this.setState({animating: true, errorMessage: '', errorMessageVisibility: false});
 
-        fetch('http://resty.azurewebsites.net/api/account/RegisterAccount',{
+        fetch('https://resty.azurewebsites.net/api/account/RegisterAccount',{
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 }),
@@ -157,7 +157,6 @@ export default class SignUp extends Component{
             if(responseJson.bSuccessful)
             {
                 this.setState({animating: false, errorMessage: '', errorMessageVisibility: false, modalVisible: true});
-                //this.TransitionScreen('Login');
             }
             else
             {
@@ -173,7 +172,7 @@ export default class SignUp extends Component{
     {
         this.setState({animating: true, errorMessage: '', errorMessageVisibility: false});
 
-        fetch('http://resty.azurewebsites.net/api/account/ResendActivationEmail',{
+        fetch('https://resty.azurewebsites.net/api/account/ResendActivationEmail',{
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 }),

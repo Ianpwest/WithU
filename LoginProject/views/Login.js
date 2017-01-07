@@ -55,7 +55,7 @@ export default class Login extends Component {
     {
         this.setState({animating: true, errorMessage: '', errorMessageVisibility: false});
 
-        fetch('http://resty.azurewebsites.net/api/account/logon',{
+        fetch('https://resty.azurewebsites.net/api/account/logon',{
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 }),
@@ -72,6 +72,7 @@ export default class Login extends Component {
             {
                 var userInfo = {
                     "Token": responseJson.Token,
+                    "Email": this.state.email,
                     "LastName": responseJson.LastName,
                     "FirstName": responseJson.FirstName
                 }
@@ -102,7 +103,7 @@ export default class Login extends Component {
     {
         try 
         {
-            await AsyncStorage.setItem(STORAGE_USER_INFO_KEY, JSON.stringify(userInfo));
+            await AsyncStorage.mergeItem(STORAGE_USER_INFO_KEY, JSON.stringify(userInfo));
         } 
         catch (error) {
             Alert.alert(error.message);

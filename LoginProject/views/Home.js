@@ -83,7 +83,7 @@ export default class Home extends Component {
             
             if (userInfo.Token !== null)
             {
-                fetch('http://resty.azurewebsites.net/api/account/GetYourName', {
+                fetch('https://resty.azurewebsites.net/api/account/GetYourName', {
                     method: 'get',
                     headers: new Headers({
                         'Content-Type': 'application/json',

@@ -22,6 +22,7 @@ import {
 } from 'react-native-material-design';
 
 import Login from './views/Login';
+import Profile from './views/Profile';
 import Home from './views/Home';
 import SignUp from './views/SignUp';
 import ForgotPassword from './views/ForgotPassword';
@@ -44,6 +45,7 @@ constructor(props) {
 
     this.CheckUsersLoggedInStatus = this.CheckUsersLoggedInStatus.bind(this);
     this.onLogoutClicked = this.onLogoutClicked.bind(this);
+    this.onProfileClicked = this.onProfileClicked.bind(this);
   }
 
   componentDidMount () {
@@ -59,7 +61,8 @@ constructor(props) {
 
     return (
       
-      <Drawer ref={(ref) => this.drawer = ref}  content={<NavDrawer ref={(ref) => this.navDrawer = ref} onLogoutClicked={this.onLogoutClicked}/>} style={styles.DrawerStyle}  
+      <Drawer ref={(ref) => this.drawer = ref}  content={<NavDrawer ref={(ref) => this.navDrawer = ref} onProfileClicked={this.onProfileClicked} onLogoutClicked={this.onLogoutClicked}/>} 
+        style={styles.DrawerStyle} 
         type="overlay" side="right"
         panOpenMask={0} openDrawerOffset={100}
         panCloseMask={0.9}
@@ -95,6 +98,10 @@ constructor(props) {
             if(route.name == 'My Activities')
             {
               return <MyActivities navigator={navigator} title={route.name} drawer={this.drawer}/>
+            }
+            if(route.name == "Profile")
+            {
+              return <Profile navigator={navigator} title={route.name} drawer={this.drawer} navDrawer={this.navDrawer}/>
             }
           }}
           
@@ -161,6 +168,14 @@ constructor(props) {
     this.drawer.close();
     this.navigator.resetTo({
       name: 'Login'
+    })
+  }
+
+  onProfileClicked()
+  {
+    this.drawer.close();
+    this.navigator.push({
+      name: "Profile"
     })
   }
 }

@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {AsyncStorage, Button, TouchableHighlight, View, Text, Alert, StyleSheet} from 'react-native';
+import {AsyncStorage, Image, Button, TouchableHighlight, View, Text, Alert, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
@@ -10,10 +10,12 @@ export default class NavDrawer extends Component {
       super();
 
       this.state = {
-          usersName: ''
+          usersName: '',
+          profileURI: 'https://withu.blob.core.windows.net/publicimages/defaultUser.jpg',
       }
 
       this.GetUserDataFromLocalStorage = this.GetUserDataFromLocalStorage.bind(this);
+      this.Profile = this.Profile.bind(this);
       this.LogOut = this.LogOut.bind(this);
    }
 
@@ -27,14 +29,24 @@ export default class NavDrawer extends Component {
         return(
            <View style={styles.NavDrawerContainer}>
                <View style={styles.Header}>
-                    <View style={styles.Circle}></View>
+                    <TouchableHighlight style={styles.TouchableHighlight} underlayColor="#009688" onPress={this.Profile}>
+                        <View style={styles.Circle}>
+                            <Image
+                                style={styles.ProfileImage}
+                                resizeMode="cover"
+                                source={{uri: this.state.profileURI}}
+                            />
+                        </View>
+                    </TouchableHighlight>
                     <Text style={styles.NameText}>With {this.state.usersName}</Text>
                </View>
                
-               <View style={styles.MenuOption}>
-                    <Icon style={styles.Icon} name="ios-person-outline" size={40}  />
-                    <Text style={styles.MenuOptionText}>Profile</Text>
-               </View>
+               <TouchableHighlight style={styles.TouchableHighlight} underlayColor="#009688" onPress={this.Profile}>
+                    <View style={styles.MenuOption}>
+                            <Icon style={styles.Icon} name="ios-person-outline" size={40}  />
+                            <Text style={styles.MenuOptionText}>Profile</Text>
+                    </View>
+               </TouchableHighlight>
 
                <TouchableHighlight style={styles.TouchableHighlight} underlayColor="#009688" onPress={this.LogOut}>
                     <View style={styles.MenuOption}>
@@ -57,8 +69,14 @@ export default class NavDrawer extends Component {
            if(userInfo != null)
            {
                userInfo = JSON.parse(userInfo);
-
-                this.setState({usersName: userInfo.FirstName});
+            
+               if (userInfo.ProfileURI != '' && userInfo.ProfileURI != undefined) {
+                   this.setState({ usersName: userInfo.FirstName, profileURI: userInfo.ProfileURI });
+               }
+               else {
+                   this.setState({ usersName: userInfo.FirstName });
+               }
+                
            }
         } 
         catch (error) {
@@ -66,11 +84,20 @@ export default class NavDrawer extends Component {
         }
     }
 
+    Profile()
+    {
+        this.props.onProfileClicked();
+    }
+
     async LogOut()
     {
         try 
         {
-            await AsyncStorage.setItem(STORAGE_USER_INFO_KEY, '');
+            var userInfo = {
+                "Token": ''
+            }
+
+            await AsyncStorage.mergeItem(STORAGE_USER_INFO_KEY, JSON.stringify(userInfo));
             this.setState({usersName: ''});
             this.props.onLogoutClicked();
         } 
@@ -91,8 +118,8 @@ const styles = {
         flexDirection: 'row',
         alignSelf: 'stretch',
         alignItems: 'center',
-        height:60,
-        backgroundColor: 'red',
+        height:50,
+        backgroundColor: '#586A6A',
         elevation: 5,
         marginBottom:20
     },
@@ -125,6 +152,12 @@ const styles = {
         width: 50,
         borderRadius: 50,
         backgroundColor:'white'
+    },
+    ProfileImage:{
+        flex: 1,
+        height: 50,
+        width: 50,
+        borderRadius: 50
     },
     NameText: {
         fontFamily: 'roboto_light',

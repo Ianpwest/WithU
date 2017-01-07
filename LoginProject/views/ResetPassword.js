@@ -81,7 +81,7 @@ export default class ResetPassword extends Component{
 
         this.setState({animating: true, errorMessage: '', errorMessageVisibility: false});
 
-        fetch('http://resty.azurewebsites.net/api/account/ResetPassword',{
+        fetch('https://resty.azurewebsites.net/api/account/ResetPassword',{
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 }),
