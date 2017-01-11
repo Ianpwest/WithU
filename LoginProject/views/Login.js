@@ -74,14 +74,15 @@ export default class Login extends Component {
                     "Token": responseJson.Token,
                     "Email": this.state.email,
                     "LastName": responseJson.LastName,
-                    "FirstName": responseJson.FirstName
+                    "FirstName": responseJson.FirstName,
+                    "ProfileURI": responseJson.ProfileURI
                 }
                 
                 //Store the users info to the local device
                 this.StoreUserInfo(userInfo);
 
                 //Show who's logged in for the drawer
-                this.props.navDrawer.setState({usersName: userInfo.FirstName});
+                this.props.navDrawer.setState({usersName: userInfo.FirstName, profileURI: userInfo.ProfileURI});
 
                 //How to dismiss the keyboard programatically
                 var DismissKeyboard = require('dismissKeyboard');

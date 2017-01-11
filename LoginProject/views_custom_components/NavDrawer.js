@@ -3,6 +3,7 @@ import {AsyncStorage, Image, Button, TouchableHighlight, View, Text, Alert, Styl
 import Icon from 'react-native-vector-icons/Ionicons';
 
 var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
+var DEFAULT_USER_URI = 'https://withu.blob.core.windows.net/publicimages/defaultUser.jpg';
 
 export default class NavDrawer extends Component {
 
@@ -11,7 +12,7 @@ export default class NavDrawer extends Component {
 
       this.state = {
           usersName: '',
-          profileURI: 'https://withu.blob.core.windows.net/publicimages/defaultUser.jpg',
+          profileURI: DEFAULT_USER_URI,
       }
 
       this.GetUserDataFromLocalStorage = this.GetUserDataFromLocalStorage.bind(this);
@@ -93,12 +94,16 @@ export default class NavDrawer extends Component {
     {
         try 
         {
+            //Reset users state
             var userInfo = {
-                "Token": ''
+                "Token": '',
+                "ProfileURI": DEFAULT_USER_URI
             }
 
             await AsyncStorage.mergeItem(STORAGE_USER_INFO_KEY, JSON.stringify(userInfo));
-            this.setState({usersName: ''});
+
+            //Reset drawer state
+            this.setState({usersName: '', profileURI: DEFAULT_USER_URI});
             this.props.onLogoutClicked();
         } 
         catch (error) {
