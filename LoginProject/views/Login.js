@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {AsyncStorage, View, Alert, Text, TextInput, ScrollView, Button, TouchableHighlight, ActivityIndicator, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import NavigationBar from '../views_custom_components/NavigationBar';
+import Backbar from '../views_custom_components/Backbar';
 
 var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
 
@@ -25,9 +25,7 @@ export default class Login extends Component {
     render(){
         return(
             <View style={{flex: 1, flexDirection: 'column'}}>
-              
-                <NavigationBar title={this.props.title} showIcon={true} navigator={this.props.navigator}></NavigationBar>
-
+                <Backbar title="Log In" navigator={this.props.navigator} showBackNav={false} />
                 <ScrollView keyboardShouldPersistTaps={true} style={{flexDirection: 'column'}} contentContainerStyle={{alignItems: 'center', justifyContent: 'flex-start', height:750}}>
                     <View style={{flexDirection: 'column', justifyContent: 'center', marginTop: 50}}>
                         <Text style={styles.ControlLabel}>Email</Text>

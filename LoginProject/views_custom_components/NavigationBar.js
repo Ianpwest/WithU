@@ -1,108 +1,99 @@
-import React, {Component, PropTypes} from 'react';
-import { View, Text, StyleSheet, TouchableHighlight} from 'react-native';
+import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Drawer from 'react-native-drawer';
 
-export default class NavigationBar extends Component {
- 
-    constructor(props) {
-      super(props);
-
-      this.TransitionScreen = this.TransitionScreen.bind(this);
-      this.OpenControlPanel = this.OpenControlPanel.bind(this);
-   }
+const NavigationBar = React.createClass({
     
+  tabIcons: [],
 
-    render()
-    {
-        //Logged In View
-        if(this.props.navStyle)
-        {
-            var getStyle = function (iconIndex, iconSetIndex) {
-                var jsonStyle = {
-                    color: 'white',
-                    marginRight: 20
-                };
+  propTypes: {
+    goToPage: React.PropTypes.func,
+    activeTab: React.PropTypes.number,
+    tabs: React.PropTypes.array,
+  },
 
-                if (iconIndex == iconSetIndex) {
-                    jsonStyle.color = 'yellow';
-                }
+  componentDidMount() {
+    this._listener = this.props.scrollValue.addListener(this.setAnimationValue);
+  },
 
-                return jsonStyle;
-            }
+  setAnimationValue({ value, }) {
+    this.tabIcons.forEach((icon, i) => {
+      const progress = Math.min(1, Math.abs(value - i))
+      icon.setNativeProps({
+        style: {
+          color: this.iconColor(progress),
+        },
+      });
+    });
+  },
 
-            return(
-                
-                    <View style={{flexDirection: 'row', alignItems: 'center', height:50, backgroundColor: "#009688" }}>
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
-                            <TouchableHighlight underlayColor="transparent" onPress={this.TransitionScreen.bind(this, 'Home', 1, this.props.highlightIndex)}><Icon style={[getStyle(1, this.props.highlightIndex), {marginLeft:10}]} name="ios-git-network-outline" size={40}  /></TouchableHighlight>
-                            <TouchableHighlight underlayColor="transparent" onPress={this.TransitionScreen.bind(this, 'My Activities', 2, this.props.highlightIndex)}><Icon style={getStyle(2, this.props.highlightIndex)} name="ios-albums-outline" size={40}  /></TouchableHighlight>
-                            <Icon style={getStyle(3, this.props.highlightIndex)} name="ios-add-circle-outline" size={40}  />
-                            <Icon style={getStyle(4, this.props.highlightIndex)} name="ios-chatbubbles-outline" size={40}  />
-                        </View>
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                            <TouchableHighlight underlayColor="transparent" onPress={this.OpenControlPanel}><Icon style={styles.HamburgerIcon} name="ios-menu-outline" size={40}  /></TouchableHighlight>
-                        </View>
-                    </View>
-            )
-        }
-        //Logged Out View
-        else
-        {
-            let icon = null;
-            if(this.props.showIcon)
-            {
-                icon = <Icon style={styles.Icon} name="md-star" size={40}  />
-            }
-            return(
-                <View style={{flexDirection: 'row', alignItems: 'center', height:50, backgroundColor: "#009688" }}>
-                    {icon}
-                    <Text style={styles.Header}>{this.props.title}</Text>
-                </View>
-            )
-        }
-       
-    }
+  //color between rgb(59,89,152) and rgb(204,204,204)
+  iconColor(progress) {
+    const red = 59 + (204 - 59) * progress;
+    const green = 89 + (204 - 89) * progress;
+    const blue = 152 + (204 - 152) * progress;
+    return `rgb(${red}, ${green}, ${blue})`;
+  },
 
+  NavigateToPage(index)
+  {
+      //Drawer
+      if(index == 4)
+      {
+          this.OpenControlPanel();
+      }
+      else
+      {
+         this.props.goToPage(index);
+      }
+  },
     CloseControlPanel(){
         this.props.drawer.close()
-    }
+    },
 
     OpenControlPanel(){
         this.props.drawer.open()
-    }
+    },
 
-    TransitionScreen(strSceneName, iconIndex, highlightedIconIndex) {
-        //Only navigate if not already on the screen
-        if(iconIndex != highlightedIconIndex)
-        {
-            this.props.navigator.push({
-                        name: strSceneName
-                    });
-        }
-    };
-    
-}
+  render() {
+    return <View style={[styles.tabs, this.props.style, ]}>
+      {this.props.tabs.map((tab, i) => {
+        return <TouchableOpacity key={tab} onPress={() => this.NavigateToPage(i)} style={styles.tab}>
+          <Icon
+            name={tab}
+            size={30}
+            color={this.props.activeTab === i ? 'rgb(59,89,152)' : 'rgb(204,204,204)'}
+            ref={(icon) => { this.tabIcons[i] = icon; }}
+          />
+        </TouchableOpacity>;
+      })}
+    </View>;
+  },
+});
 
 const styles = StyleSheet.create({
-  Header:{
-      fontSize:25,
-      fontFamily: 'roboto_light',
-      textAlign: 'center',
-      flex: 1,
-      color: "white"
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 10,
   },
-  Icon: {
-      color: "white",
-      marginRight:-45
+  tabs: {
+    height: 45,
+    flexDirection: 'row',
+    paddingTop: 5,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
   },
-  IconNavStyle: {
-      color: 'white',
-      textAlign: 'left',
-      marginRight:10
-  },
-  HamburgerIcon: {
-      color: 'white',
-      marginRight: 20
-  }
 });
+
+export default NavigationBar;

@@ -1,8 +1,39 @@
 import React, {Component, PropTypes} from 'react';
 import {AsyncStorage, BackAndroid, Button, Alert, View, Text, StyleSheet} from 'react-native';
 import NavigationBar from '../views_custom_components/NavigationBar';
+import SwipeCards from 'react-native-swipe-cards';
 
 var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
+
+
+let Card = React.createClass({
+  render() {
+    return (
+      <View style={[styles.card, {backgroundColor: this.props.backgroundColor}]}>
+        <Text>{this.props.text}</Text>
+      </View>
+    )
+  }
+})
+
+let NoMoreCards = React.createClass({
+  render() {
+    return (
+      <View style={styles.noMoreCards}>
+        <Text>No more cards</Text>
+      </View>
+    )
+  }
+})
+
+const Cards = [
+  {text: 'Tomato', backgroundColor: 'red'},
+  {text: 'Aubergine', backgroundColor: 'purple'},
+  {text: 'Courgette', backgroundColor: 'green'},
+  {text: 'Blueberry', backgroundColor: 'blue'},
+  {text: 'Umm...', backgroundColor: 'cyan'},
+  {text: 'orange', backgroundColor: 'orange'},
+]
 
 export default class Home extends Component {
     
@@ -12,7 +43,8 @@ export default class Home extends Component {
       this.state = {
           serviceResponseText: '',
           initialPosition: '',
-          lastPosition: ''
+          lastPosition: '',
+          cards: Cards
       };
 
       this.CallSecureService = this.CallSecureService.bind(this);
@@ -54,8 +86,18 @@ export default class Home extends Component {
     {
         return(
             <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
-                <NavigationBar navStyle={true} highlightIndex={1} navigator={this.props.navigator} drawer={this.props.drawer}></NavigationBar>
+                
                 <Text>You made it home!</Text>
+
+                <SwipeCards
+                    cards={this.state.cards}
+                    
+                    renderCard={(cardData) => <Card {...cardData} />}
+                    renderNoMoreCards={() => <NoMoreCards />}
+
+                    handleYup={this.handleYup}
+                    handleNope={this.handleNope}
+                    />
 
                 <Button onPress={this.CallSecureService} title="Call secure service"></Button>
 
@@ -73,6 +115,13 @@ export default class Home extends Component {
         )
     }
 
+    handleYup (card) {
+        console.log(`Yup for ${card.text}`)
+    }
+
+    handleNope (card) {
+        console.log(`Nope for ${card.text}`)
+    }
     async CallSecureService()
     {
         try 
@@ -124,5 +173,11 @@ const styles = StyleSheet.create({
   },
   ServiceButton:{
       height:150
+  },
+  card: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 250,
+    height: 250,
   }
 });

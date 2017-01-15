@@ -14,8 +14,11 @@ import {
   Alert,
   Navigator,
   BackAndroid,
-  AsyncStorage
+  AsyncStorage,
+  Icon,
+  TouchableHighlight
 } from 'react-native';
+
 import {
   Button,
   Toolbar
@@ -30,9 +33,11 @@ import ResetPassword from './views/ResetPassword';
 import MyActivities from './views/MyActivities';
 import Drawer from 'react-native-drawer';
 import NavDrawer from './views_custom_components/NavDrawer';
+import NavigationBar from './views_custom_components/NavigationBar';
 import SplashScreen from 'react-native-smart-splash-screen'
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 
-var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
+var STORAGE_USER_INFO_KEY = 'WithUUserInfo'; 
 
 export default class LoginProject extends Component {
 
@@ -93,7 +98,20 @@ constructor(props) {
             }
             if(route.name == 'Home' || route.name == 'HomeLoggedIn') 
             {
-              return <Home navigator={navigator} title={route.name} drawer={this.drawer}/>
+              return <ScrollableTabView
+                        ref={(ref) => this.scrollableTabView = ref}
+                        renderTabBar={() => <NavigationBar drawer={this.drawer}/>}
+                        locked = {false}
+                      >
+                        <Home tabLabel="ios-git-network-outline" navigator={navigator} title={route.name} drawer={this.drawer} />
+                        <MyActivities tabLabel="ios-albums-outline" navigator={navigator} title={route.name} drawer={this.drawer}/>
+                        <View tabLabel="ios-add-circle-outline"></View>
+                        <View tabLabel="ios-chatbubbles-outline"></View>
+
+                        <View tabLabel="ios-menu-outline" style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                            <TouchableHighlight underlayColor="transparent" onPress={this.OpenControlPanel}></TouchableHighlight>
+                        </View>
+                    </ScrollableTabView>
             }
             if(route.name == 'My Activities')
             {

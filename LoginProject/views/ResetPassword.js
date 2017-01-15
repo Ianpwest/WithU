@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {BackAndroid, ActivityIndicator, TextInput, Button, Alert, View, Text, StyleSheet} from 'react-native';
-import NavigationBar from '../views_custom_components/NavigationBar';
+import Backbar from '../views_custom_components/Backbar';
 
 export default class ResetPassword extends Component{
     constructor(){
@@ -27,8 +27,7 @@ export default class ResetPassword extends Component{
     render(){
         return(
             <View style={{flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
-               <NavigationBar title={this.props.title} showIcon={true} navigator={this.props.navigator}></NavigationBar>
-
+               <Backbar title="Reset Password" navigator={this.props.navigator} showBackNav={true} />
                <View style={styles.ControlContainer}>
                     <Text style={styles.ControlLabel}>Email Reset Code</Text>
                     <TextInput style={styles.TextInput} placeholder="(required)" value={this.state.resetCode} ref={(input) => this.resetCodeTextInput = input} onChangeText={(resetCode) => this.setState({resetCode})}

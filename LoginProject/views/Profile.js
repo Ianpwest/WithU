@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {AsyncStorage, BackAndroid, View, Alert, Text, TextInput, ScrollView, Button, TouchableHighlight, ActivityIndicator, Image, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
-import NavigationBar from '../views_custom_components/NavigationBar';
+import Backbar from '../views_custom_components/Backbar';
 
 var STORAGE_USER_INFO_KEY = 'WithUUserInfo';
 
@@ -46,7 +46,7 @@ export default class Profile extends Component {
     render(){
         return(
             <View style={{flex: 1, flexDirection: 'column'}}>
-                <NavigationBar navStyle={true} highlightIndex={0} navigator={this.props.navigator} drawer={this.props.drawer}></NavigationBar>
+                <Backbar title="Profile" navigator={this.props.navigator} showBackNav={true} />
                 <View style={{flex: 1, flexDirection:"row", maxHeight:200, backgroundColor:"#80cbc4", elevation:3}}>
                     <Image
                         style={styles.Image}

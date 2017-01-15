@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {BackAndroid, Button, TextInput, ActivityIndicator, TouchableHighlight, 
         View, ScrollView, Text, ToastAndroid, Modal, StyleSheet} from 'react-native';
-import NavigationBar from '../views_custom_components/NavigationBar';
+        import Backbar from '../views_custom_components/Backbar';
 
 export default class SignUp extends Component{
     constructor(){
@@ -37,7 +37,7 @@ export default class SignUp extends Component{
     render(){
         return(
             <View style={{flexDirection: 'column', justifyContent: 'flex-start', flex: 2}}>
-               <NavigationBar title={this.props.title} showIcon={true} navigator={this.props.navigator}></NavigationBar>
+              <Backbar title="Sign Up" navigator={this.props.navigator} showBackNav={true} />
                <ScrollView keyboardShouldPersistTaps={true} style={{flexDirection: 'column'}} contentContainerStyle={{alignItems: 'center', justifyContent: 'flex-start', height:750}}>
                 <View style={styles.ControlContainer}>
                     <Text style={styles.ControlLabel}>Email</Text>

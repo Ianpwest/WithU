@@ -12,7 +12,9 @@
     "react-native-drawer": "^2.3.0",
     "react-native-image-crop-picker": "^0.11.1",
     "react-native-material-design": "^0.3.7",
-    "react-native-smart-splash-screen": "^2.1.1"
+    "react-native-scrollable-tab-view": "^0.7.0",
+    "react-native-smart-splash-screen": "^2.1.1",
+    "react-native-swipe-cards": "0.0.9"
   },
   "devDependencies": {
     "babel-jest": "17.0.2",
